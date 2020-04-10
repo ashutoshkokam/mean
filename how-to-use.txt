@@ -8,3 +8,10 @@ Make sure you use the latest version of the CLI (upgrade guide below)
 Run "ng serve" to see the app in action (try "npm start" in case "ng serve" fails).
 
 Feel free to compare it with your project code to spot any errors you might have.
+
+echo "# mean" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/ashutoshkokam/mean.git
+git push -u origin master

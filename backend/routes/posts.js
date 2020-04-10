@@ -1,10 +1,11 @@
 const express = require('express');
 const Post = require('../models/post');
-
+const checkAuth = require('../middleware/check-auth');
 const router = express.Router();
 
+let fetchedPosts;
 //POST - ADD POST
-router.post('', (req, res, next) => {
+router.post('',checkAuth, (req, res, next) => {
     const post = new Post({
         title: req.body.title,
         content: req.body.content
@@ -20,18 +21,31 @@ router.post('', (req, res, next) => {
 });
 //GET ALL POSTS
 router.get('', (req, res, next) => {
-    Post.find()
-        .then((docs) => {
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const postQuery= Post.find();
+    if(pageSize && currentPage){
+        postQuery
+        .skip(pageSize * (currentPage - 1))
+        .limit(pageSize);
+    }
+    postQuery
+    .then((docs)=>{
+        fetchedPosts = docs;
+        return Post.count()
+    })
+        .then((count) => {
             res.status(200).json({
                 message: "Success!",
-                posts: docs
+                posts: fetchedPosts,
+                maxPosts: count
             });
 
         });
 
 });
 //DELETE
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id',checkAuth, (req, res, next) => {
     const postId = req.params.id;
     //console.log(postId);
     Post.deleteOne({ _id: postId }).then((ret) => {
@@ -43,7 +57,7 @@ router.delete('/:id', (req, res, next) => {
     })
 });
 //UPDATE
-router.put("/:id", (req, res, next) => {
+router.put("/:id",checkAuth, (req, res, next) => {
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,

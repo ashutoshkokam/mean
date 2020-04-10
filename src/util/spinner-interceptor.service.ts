@@ -6,16 +6,16 @@ import { HttpHandler } from '@angular/common/http';
 import { HttpEvent } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { SpinnerService } from './spinner.service';
- 
+
 @Injectable()
 export class SpinnerHttpInterceptor implements HttpInterceptor {
- 
-     constructor(private spinnerService: SpinnerService) { }
- 
+
+    constructor(private spinnerService: SpinnerService) { }
+
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
- 
+        //console.log('Spinner Invoked');
         this.spinnerService.show();
- 
+
         return next
             .handle(req)
             .pipe(

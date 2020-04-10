@@ -9,7 +9,8 @@ import {
   MatButtonModule,
   MatToolbarModule,
   MatExpansionModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatPaginatorModule
 } from "@angular/material";
 
 import { AppComponent } from "./app.component";
@@ -19,6 +20,9 @@ import { PostListComponent } from "./posts/post-list/post-list.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { SpinnerHttpInterceptor } from "src/util/spinner-interceptor.service";
 import { SpinnerComponent } from './spinner/spinner.component';
+import { SignupComponent } from './auth/signup/signup.component';
+import { LoginComponent } from './auth/login/login.component';
+import { AuthInterceptor } from "src/util/auth-interceptor";
 
 @NgModule({
   declarations: [
@@ -26,7 +30,9 @@ import { SpinnerComponent } from './spinner/spinner.component';
     PostCreateComponent,
     HeaderComponent,
     PostListComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    SignupComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -39,12 +45,18 @@ import { SpinnerComponent } from './spinner/spinner.component';
     MatToolbarModule,
     MatExpansionModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   providers: [
     {
       provide:HTTP_INTERCEPTORS,
       useClass:SpinnerHttpInterceptor,
+      multi:true
+    },
+    {
+      provide:HTTP_INTERCEPTORS,
+      useClass:AuthInterceptor,
       multi:true
     }
   ],

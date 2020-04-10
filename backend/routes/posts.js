@@ -17,7 +17,11 @@ router.post('', checkAuth, (req, res, next) => {
             message: "post added",
             id: data._id
         });
-    });//console.log(post);
+    })
+    .catch((err)=>{
+        res.status(500).json({message:"Post Creation Failed"})
+    })
+    ;//console.log(post);
 
 });
 //GET ALL POSTS
@@ -42,6 +46,8 @@ router.get('', (req, res, next) => {
                 maxPosts: count
             });
 
+        }).catch(err=>{
+            res.status(500).json({message:"Fetching Post Failed!"})
         });
 
 });
@@ -59,10 +65,13 @@ router.delete('/:id', checkAuth, (req, res, next) => {
         }
         else {
             res.status(401).json({
-                message: "Not Authorised!",
+                message: "Unauthorised Access!",
 
             })
         }
+    })
+    .catch(err=>{
+        res.status(500).json({message:"Post Delete Failed!"})
     })
 });
 //UPDATE
@@ -86,9 +95,12 @@ router.put("/:id", checkAuth, (req, res, next) => {
 
                 //console.log(result);
                 res.status(401).json({
-                    message: "Not Authorised!"
+                    message: "Unauthorised Access"
                 })
             }
+        })
+        .catch(err=>{
+            res.status(500).json({message:"Post Update Failed!"})
         })
 })
 
@@ -104,7 +116,9 @@ router.get("/:id", (req, res, next) => {
                     message: 'Post not Found!'
                 })
             }
-        }).catch()
+        }).catch(err=>{
+            res.status(500).json({message:"Fetching Post Failed!"})
+        })
 
 })
 module.exports = router;

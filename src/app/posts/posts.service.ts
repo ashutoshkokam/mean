@@ -22,13 +22,15 @@ export class PostsService {
             return {
               title: post.title,
               content: post.content,
-              id: post._id
+              id: post._id,
+              createdBy:post.createdBy
             }
           }),
           maxPosts: data.maxPosts
         }
       }))
       .subscribe((tranformedData) => {
+        console.log(tranformedData);
         this.posts = tranformedData.posts;
         this.postsUpdated.next({posts:[...this.posts],maxPosts:tranformedData.maxPosts})
       });
@@ -40,7 +42,7 @@ export class PostsService {
   }
 
   addPost(title: string, content: string) {
-    const post: Post = { id: null, title: title, content: content };
+    const post: Post = { id: null, title: title, content: content,createdBy:null };
 
     this.httpClient.post<any>('http://localhost:3000/api/posts', post)
       .subscribe((resData) => {
@@ -64,7 +66,7 @@ export class PostsService {
   }
 
   updatePost(id: string, title: string, content: string) {
-    const post = { id: id, title: title, content: content };
+    const post:Post =  { id: id, title: title, content: content,createdBy:null };
     this.httpClient.put<any>('http://localhost:3000/api/posts/' + id, post)
       .subscribe((data) => {
         console.log(data);

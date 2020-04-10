@@ -5,10 +5,11 @@ const router = express.Router();
 
 let fetchedPosts;
 //POST - ADD POST
-router.post('',checkAuth, (req, res, next) => {
+router.post('', checkAuth, (req, res, next) => {
     const post = new Post({
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        createdBy: req.userData.userId
     });
     post.save().then((data) => {
         //console.log(data);
@@ -23,17 +24,17 @@ router.post('',checkAuth, (req, res, next) => {
 router.get('', (req, res, next) => {
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.page;
-    const postQuery= Post.find();
-    if(pageSize && currentPage){
+    const postQuery = Post.find();
+    if (pageSize && currentPage) {
         postQuery
-        .skip(pageSize * (currentPage - 1))
-        .limit(pageSize);
+            .skip(pageSize * (currentPage - 1))
+            .limit(pageSize);
     }
     postQuery
-    .then((docs)=>{
-        fetchedPosts = docs;
-        return Post.count()
-    })
+        .then((docs) => {
+            fetchedPosts = docs;
+            return Post.count()
+        })
         .then((count) => {
             res.status(200).json({
                 message: "Success!",
@@ -45,30 +46,49 @@ router.get('', (req, res, next) => {
 
 });
 //DELETE
-router.delete('/:id',checkAuth, (req, res, next) => {
+router.delete('/:id', checkAuth, (req, res, next) => {
     const postId = req.params.id;
     //console.log(postId);
-    Post.deleteOne({ _id: postId }).then((ret) => {
+    Post.deleteOne({ _id: postId, createdBy: req.userData.userId }).then((ret) => {
         //console.log(ret);
-        res.status(200).json({
-            message: "Success",
+        if (ret.n > 0) {
+            res.status(200).json({
+                message: "Success",
 
-        })
+            })
+        }
+        else {
+            res.status(401).json({
+                message: "Not Authorised!",
+
+            })
+        }
     })
 });
 //UPDATE
-router.put("/:id",checkAuth, (req, res, next) => {
+router.put("/:id", checkAuth, (req, res, next) => {
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        createdBy: req.userData.userId
     });
-    Post.updateOne({ _id: req.params.id }, post)
+    Post.updateOne({ _id: req.params.id, createdBy: post.createdBy }, post)
         .then((result) => {
-            console.log(result);
-            res.status(200).json({
-                message: "Updated"
-            })
+            if (result.nModified > 0) {
+
+                //console.log(result);
+                res.status(200).json({
+                    message: "Updated"
+                })
+            }
+            else {
+
+                //console.log(result);
+                res.status(401).json({
+                    message: "Not Authorised!"
+                })
+            }
         })
 })
 
@@ -81,7 +101,7 @@ router.get("/:id", (req, res, next) => {
             }
             else {
                 res.status(404).json({
-                    message: 'Post nt Found!'
+                    message: 'Post not Found!'
                 })
             }
         }).catch()

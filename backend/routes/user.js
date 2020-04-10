@@ -52,7 +52,7 @@ router.post("/login", (req, res, next) => {
                 "must_be_some_long_secret_key", 
                 { expiresIn: "1h" });
                 console.log(token);
-                res.status(200).json({token:token,expiresIn:3600});
+                res.status(200).json({token:token,expiresIn:3600,userData:{userId:fetchedUser._id,email:fetchedUser.email}});
         })
         .catch(err => {
             //console.log(err);

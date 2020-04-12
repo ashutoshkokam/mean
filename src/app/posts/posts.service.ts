@@ -5,17 +5,20 @@ import { Post } from './post.model';
 import { HttpClient } from '@angular/common/http';
 
 import { map } from 'rxjs/operators'
+import { environment } from 'src/environments/environment';
 
+
+const BACKEND_URL = environment.baseURI+'/posts/';
 @Injectable({ providedIn: 'root' })
 export class PostsService {
   constructor(private httpClient: HttpClient) { }
   private posts: Post[] = [];
   private postsUpdated = new Subject<any>();
-
+  
   getPosts(pageSize: number, currentPage: number) {
     const queryParams = `?pagesize=${pageSize}&page=${currentPage}`;
     this.httpClient
-      .get<any>('http://localhost:3000/api/posts' + queryParams)
+      .get<any>(BACKEND_URL + queryParams)
       .pipe(map((data) => {
         return {
           posts: data.posts.map(post => {
@@ -44,7 +47,7 @@ export class PostsService {
   addPost(title: string, content: string) {
     const post: Post = { id: null, title: title, content: content,createdBy:null };
 
-    this.httpClient.post<any>('http://localhost:3000/api/posts', post)
+    this.httpClient.post<any>(BACKEND_URL, post)
       .subscribe((resData) => {
         //console.log(resData.message+resData.id);
         post.id = resData.id;
@@ -56,7 +59,7 @@ export class PostsService {
   }
   deletePost(id: string) {
     //console.log(id);
-    return this.httpClient.delete<any>('http://localhost:3000/api/posts/' + id);
+    return this.httpClient.delete<any>(BACKEND_URL + id);
       // .subscribe((data) => {
       //   //console.log(data.message + " deleted");
       //   this.posts = this.posts.filter(post => post.id !== id);
@@ -67,7 +70,7 @@ export class PostsService {
 
   updatePost(id: string, title: string, content: string) {
     const post:Post =  { id: id, title: title, content: content,createdBy:null };
-    this.httpClient.put<any>('http://localhost:3000/api/posts/' + id, post)
+    this.httpClient.put<any>(BACKEND_URL + id, post)
       .subscribe((data) => {
         console.log(data);
       })
@@ -75,7 +78,7 @@ export class PostsService {
 
   getPost(id: string) {
     //from server
-    return this.httpClient.get<any>("http://localhost:3000/api/posts/" + id)
+    return this.httpClient.get<any>(BACKEND_URL + id)
     //return { ...this.posts.find(p => p.id === id) };
   }
 }

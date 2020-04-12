@@ -7,6 +7,10 @@ import { isNullOrUndefined } from "util";
 import { Router } from "@angular/router";
 import { User } from "./user.model";
 
+import { environment } from 'src/environments/environment';
+
+
+const BACKEND_URL = environment.baseURI+'/user/';
 @Injectable({
     providedIn: 'root'
 })
@@ -27,14 +31,15 @@ export class AuthService {
     }
     createUser(email: string, pwd: string) {
         const authData: AuthData = { email: email, password: pwd }
-        this.httpClient.post("http://localhost:3000/api/user/signup", authData)
+        this.httpClient.post(BACKEND_URL+ "signup", authData)
             .subscribe((data) => {
                 console.log(data);
             })
     }
     login(email: string, pwd: string) {
         const authData: AuthData = { email: email, password: pwd }
-        this.httpClient.post<{ token: string, expiresIn: number,userData:User }>("http://localhost:3000/api/user/login", authData)
+        this.httpClient.post<{ token: string, expiresIn: number,userData:User }>
+        (BACKEND_URL+"login", authData)
             .subscribe((data) => {
                 this.token = data.token;
                 const expiresIn = data.expiresIn;
@@ -72,7 +77,7 @@ export class AuthService {
         clearTimeout(this.tokenTimer)
         this.clearAuthData();
         this.authStatusListener.next(!isNullOrUndefined(this.token));
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
     }
     private saveAuthData(token: string, expirationDate: Date,userData:User) {
         localStorage.setItem("token", token);

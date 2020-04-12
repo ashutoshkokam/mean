@@ -8,8 +8,23 @@ const userRoutes = require('./routes/user');
 const app = express();
 //rrHBFZBZLouDAGSo
 //app db connection
+//?retryWrites=true&w=majority
+//
+
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    autoIndex: false, // Don't build indexes
+    poolSize: 10, // Maintain up to 10 socket connections
+    serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    family: 4 // Use IPv4, skip trying IPv6
+  };
 mongoose
-    .connect("mongodb+srv://master:rrHBFZBZLouDAGSo@cluster0-2xvlb.mongodb.net/node-angular?retryWrites=true&w=majority")
+    .connect(`mongodb+srv://master:${process.env.MONGO_ATLAS_PWD}@cluster0-2xvlb.mongodb.net/node-angular`,
+    options)
     .then(() => {
         console.log('Connected to DB');
     })

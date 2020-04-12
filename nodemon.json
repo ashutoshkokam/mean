@@ -1,0 +1,6 @@
+{
+    "env":{
+        "SECRET_KEY":"must_be_some_long_secret_key",
+        "MONGO_ATLAS_PWD":"rrHBFZBZLouDAGSo"
+    }
+}

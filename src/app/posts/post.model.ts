@@ -3,4 +3,5 @@ export interface Post {
   title: string;
   content: string;
   createdBy:string;
+  imagePath:string;
 }

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
-
+const path = require('path');
 
 const app = express();
 //rrHBFZBZLouDAGSo
@@ -22,8 +22,13 @@ const options = {
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     family: 4 // Use IPv4, skip trying IPv6
   };
+
+  const connectionString = 'mongodb://127.0.0.1:27017/node-angular';
+      // .connect(`mongodb+srv://master:${process.env.MONGO_ATLAS_PWD}@cluster0-2xvlb.mongodb.net/node-angular`,
+    // options)
+
 mongoose
-    .connect(`mongodb+srv://master:${process.env.MONGO_ATLAS_PWD}@cluster0-2xvlb.mongodb.net/node-angular`,
+    .connect(connectionString,
     options)
     .then(() => {
         console.log('Connected to DB');
@@ -35,6 +40,7 @@ mongoose
 //adding middlewares to parsebody/URI
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/images", express.static(path.join("backend/images")));
 
 //CORS Enabled
 app.use((req, res, next) => {

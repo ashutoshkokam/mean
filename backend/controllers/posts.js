@@ -2,19 +2,25 @@ const Post = require('../models/post');
 let fetchedPosts;
 
 exports.addPost = (req, res, next) => {
-    const post = new Post({
-        title: req.body.title,
-        content: req.body.content,
-        createdBy: req.userData.userId
-    });
-    post.save().then((data) => {
+    const url = req.protocol + "://" + req.get("host");
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+    imagePath: url + "/images/" + req.file.filename,
+    createdBy: req.userData.userId
+  });
+    post.save().then((createdPost) => {
         //console.log(data);
         res.status(201).json({
-            message: "post added",
-            id: data._id
+            message: "Post added successfully",
+            post: {
+              ...createdPost,
+              id: createdPost._id
+            }
         });
     })
     .catch((err)=>{
+        console.log(err)
         res.status(500).json({message:"Post Creation Failed"})
     })
     ;//console.log(post);
@@ -72,10 +78,16 @@ exports.deletePost = (req, res, next) => {
 }
 
 exports.updatePost = (req, res, next) => {
+     let imagePath = req.body.imagePath;
+  if (req.file) {
+    const url = req.protocol + "://" + req.get("host");
+    imagePath = url + "/images/" + req.file.filename;
+  }
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
+        imagePath:imagePath,
         createdBy: req.userData.userId
     });
     Post.updateOne({ _id: req.params.id, createdBy: post.createdBy }, post)
@@ -89,7 +101,7 @@ exports.updatePost = (req, res, next) => {
             }
             else {
 
-                //console.log(result);
+                console.log(result);
                 res.status(401).json({
                     message: "Unauthorised Access"
                 })

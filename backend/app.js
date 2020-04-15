@@ -23,7 +23,9 @@ const options = {
     family: 4 // Use IPv4, skip trying IPv6
   };
 
-  const connectionString = 'mongodb://127.0.0.1:27017/node-angular';
+  const connectionString = `mongodb+srv://master:${process.env.MONGO_ATLAS_PWD}@cluster0-2xvlb.mongodb.net/node-angular`;
+  //'mongodb://127.0.0.1:27017/node-angular';
+
       // .connect(`mongodb+srv://master:${process.env.MONGO_ATLAS_PWD}@cluster0-2xvlb.mongodb.net/node-angular`,
     // options)
 

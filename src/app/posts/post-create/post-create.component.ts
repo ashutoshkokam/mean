@@ -5,6 +5,7 @@ import { Mode } from '../../../util/enum'
 import { PostsService } from "../posts.service";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { Post } from "../post.model";
+import { SpinnerService } from "src/util/spinner.service";
 
 @Component({
   selector: "app-post-create",
@@ -19,7 +20,8 @@ export class PostCreateComponent implements OnInit {
   post: Post;
   imagePreview: string = '';
   imageFile:File;
-  constructor(public postsService: PostsService, private router: Router, private route: ActivatedRoute) { }
+  constructor(public postsService: PostsService, private router: Router, 
+    private route: ActivatedRoute,private spinnerService:SpinnerService) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -56,6 +58,7 @@ export class PostCreateComponent implements OnInit {
     this.imageFile=null;
   }
   onImagePicked(event: Event) {
+this.spinnerService.show();
     this.imagePreview='';
     const file = (event.target as HTMLInputElement).files[0];
     this.imageFile = file;
@@ -64,9 +67,11 @@ export class PostCreateComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       this.imagePreview = reader.result as string;
+      this.spinnerService.hide();
     };
     if (this.isValidFile(file))
       reader.readAsDataURL(file);
+      
   }
   isValidFile(file: File) {
     let isVaid = false;

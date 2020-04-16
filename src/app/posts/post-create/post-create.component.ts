@@ -58,7 +58,6 @@ export class PostCreateComponent implements OnInit {
     this.imageFile=null;
   }
   onImagePicked(event: Event) {
-this.spinnerService.show();
     this.imagePreview='';
     const file = (event.target as HTMLInputElement).files[0];
     this.imageFile = file;
@@ -69,8 +68,11 @@ this.spinnerService.show();
       this.imagePreview = reader.result as string;
       this.spinnerService.hide();
     };
-    if (this.isValidFile(file))
+    if (this.isValidFile(file)){
+      this.spinnerService.show();
       reader.readAsDataURL(file);
+    }
+      
       
   }
   isValidFile(file: File) {

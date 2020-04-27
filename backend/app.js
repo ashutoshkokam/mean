@@ -4,8 +4,33 @@ const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
 const path = require('path');
+ const swaggerUi = require('swagger-ui-express');
+ const swaggerJSDoc = require('swagger-jsdoc');
+// const swaggerSpec = swaggerJSDoc({
+//     explorer: true
+//   });
+
+var swaggerDefinition = {
+    info: {
+      title: 'Node Swagger API',
+      version: '1.0.0',
+      description: 'Demonstrating how to describe a RESTful API with Swagger',
+    },
+    host: 'localhost:3000',
+    basePath: '/',
+  };
+  
+  // options for the swagger docs
+  var options_swagger = {
+    // import swaggerDefinitions
+    swaggerDefinition: swaggerDefinition,
+    // path to the API docs
+    apis: ['./routes/*.js'],
+  };
 
 const app = express();
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options_swagger)));
+
 //rrHBFZBZLouDAGSo
 //app db connection
 //?retryWrites=true&w=majority
